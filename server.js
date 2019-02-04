@@ -7,7 +7,6 @@ const API_KEY=process.env.API_KEY
 
 app.use(express.static('public'));
 
-
 app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
@@ -30,9 +29,10 @@ app.post('/message', function(req, res) {
 
   let chat_id = message.chat.id
   let text = 'Polo'
-  
+  let url = `https://api.telegram.org/bot${API_KEY}/sendMessage`
+   
   axios
-    .post(`https://api.telegram.org/bot${API_KEY}/sendMessage`, { chat_id, text })
+    .post(url, { chat_id, text })
     .then(response => {
       res.end('ok')
     })

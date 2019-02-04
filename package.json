@@ -12,7 +12,8 @@
   "dependencies": {
     "express": "^4.16.4",
     "axios": "^0.18.0",
-    "body-parser": "^1.18.3"
+    "body-parser": "^1.18.3",
+    "get-urls": "^8.0.0"
   },
   "engines": {
     "node": "8.x"
