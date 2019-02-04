@@ -20,14 +20,6 @@ app.use(
   })
 ) 
 
-const extractURLSFromText = (text) => {
-  if (!text) {
-    return []
-  }
-  
-  return getURLS(text)
-}
-
 const answerToURLS = (res, urls, message) => {
   let chat_id = message.chat.id
   let text = urls.size > 1 ? 'Nice urls!' : 'Nice url!'
@@ -46,10 +38,16 @@ const answerToURLS = (res, urls, message) => {
 
 app.post('/message', function(req, res) {
   const { message } = req.body
+  let urls = new Set()
 
-  let urls = getURLS(message.text)
+  console.log(message)
   
-  console.log(urls)
+  if (message && message.text) {
+    urls = getURLS(message.text)
+  }
+  
+  console.log(urls, message.text)
+  
   if (!message && !urls.size) {
     return res.end()
   }
