@@ -4,7 +4,8 @@ const bodyParser = require('body-parser')
 const axios = require('axios')
 const getURLS = require('get-urls')
 
-const API_KEY=process.env.API_KEY
+const API_KEY = process.env.API_KEY
+const TELEGRAM_URL = `https://api.telegram.org/bot${API_KEY}/sendMessage`
 
 app.use(express.static('public'));
 
@@ -19,29 +20,21 @@ app.use(
   })
 ) 
 
-app.post('/message', function(req, res) {
-  const { message } = req.body
-
-  if (!message) {
-    return res.end()
+const extractURLSFromText = (text) => {
+  if (!text) {
+    return []
   }
   
-  console.log(message)
-  
-  let urls = getURLS(message.text)
-   
-  if (!urls.size) {
-    return res.end()
-  }
-  
-  console.log(urls)
+  return getURLS(text)
+}
 
+const answerToURLS = (res, urls, message) => {
   let chat_id = message.chat.id
   let text = urls.size > 1 ? 'Nice urls!' : 'Nice url!'
-  let url = `https://api.telegram.org/bot${API_KEY}/sendMessage`
-   
+  let data = { chat_id, text }
+  
   axios
-    .post(url, { chat_id, text })
+    .post(TELEGRAM_URL, data)
     .then(response => {
       res.end('ok')
     })
@@ -49,6 +42,22 @@ app.post('/message', function(req, res) {
       console.log('Error :', err)
       res.end('Error :' + err)
     })
+}
+
+app.post('/message', function(req, res) {
+  const { message } = req.body
+
+  let urls = getURLS(message.text)
+  
+  console.log(urls)
+  if (!message && !urls.size) {
+    return res.end()
+  }
+  
+
+  if (urls.size > 0) {
+    answerToURLS(res, urls, message)
+  }
 })
 
 const listener = app.listen(process.env.PORT, function() {
