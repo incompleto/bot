@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
 const axios = require('axios')
+const getURLS = require('get-urls')
 
 const API_KEY=process.env.API_KEY
 
@@ -21,14 +22,22 @@ app.use(
 app.post('/message', function(req, res) {
   const { message } = req.body
 
-  console.log(message)
-
   if (!message) {
     return res.end()
   }
+  
+  console.log(message)
+  
+  let urls = getURLS(message.text)
+   
+  if (!urls.size) {
+    return res.end()
+  }
+  
+  console.log(urls)
 
   let chat_id = message.chat.id
-  let text = 'Polo'
+  let text = urls.size > 1 ? 'Nice urls!' : 'Nice url!'
   let url = `https://api.telegram.org/bot${API_KEY}/sendMessage`
    
   axios
