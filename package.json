@@ -10,7 +10,9 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3"
   },
   "engines": {
     "node": "8.x"
