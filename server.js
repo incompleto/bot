@@ -6,7 +6,7 @@ const getURLS = require('get-urls')
 
 const Storage = require('./storage')
 
-const TELEGRAM_API_KEY = process.env.API_KEY
+const TELEGRAM_API_KEY = process.env.TELEGRAM_API_KEY
 const TELEGRAM_URL = `https://api.telegram.org/bot${TELEGRAM_API_KEY}/sendMessage`
 
 const showError = (error) => {
