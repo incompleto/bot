@@ -38,12 +38,8 @@ app.use(
   })
 ) 
 
-const answerToURLS = (urls, message) => {
-  let chat_id = message.chat.id
-  let text = urls.length > 1 ? 'Nice urls!' : 'Nice url!'
-  let data = { chat_id, text }
-
-  return axios.post(TELEGRAM_URL, data)
+const reply = (chat_id, text) => {
+  return axios.post(TELEGRAM_URL, { chat_id, text })
 }
 
 const storeURLS = (chat, from, urls) => {
@@ -71,7 +67,9 @@ const onMessage = (req, res) => {
     let urls = Array.from(getURLS(message.text))
 
     if (urls.length > 0) {
-      answerToURLS(urls, message)
+      let text = urls.length > 1 ? 'Nice urls!' : 'Nice url!'
+      
+      reply(message.chat.id, text)
         .then(response => {
           storeURLS(chat, from, urls)
         })
