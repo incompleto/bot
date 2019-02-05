@@ -30,8 +30,8 @@ The installation process requires you to:
 *In this step you'll create and setup an Airtable base to collect URLs, photos, and avatars from a chat*
 
 1. Go to [Airtable](https://airtable.com) and create a new base using `Import a spreadsheet`
-2. Pick the option to create the table using a CSV file and use the [aritable.csv](airtable.csv) file in this repo
-3. Rename the base and copy that **name** → `AIRTABLE_BASE_NAME`
+2. Pick the option to create the table using a CSV file and use the CSV files in the `templates` folder.
+3. Rename the base and copy the **name** → `AIRTABLE_BASE_NAME`
 4. Go to [your account](https://airtable.com/account) and copy the **API key** → `AIRTABLE_API_KEY`
 
 #### Create the Telegram bot
