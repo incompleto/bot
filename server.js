@@ -39,6 +39,7 @@ const answerToURLS = (res, urls, message) => {
 app.post('/message', function(req, res) {
   const { message } = req.body
   
+  console.log(req)
   if (!message) {
     return res.end()
   }
