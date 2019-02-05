@@ -7,6 +7,7 @@ const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID
 const AIRTABLE_BASE = process.env.AIRTABLE_BASE_NAME
 const AIRTABLE_TABLE_URLS = process.env.AIRTABLE_TABLE_URLS
 const AIRTABLE_TABLE_IMAGES = process.env.AIRTABLE_TABLE_IMAGES
+const AIRTABLE_TABLE_AVATARS = process.env.AIRTABLE_TABLE_AVATARS
 
 Airtable.configure({
   endpointUrl: AIRTABLE_ENDPOINT,
@@ -25,9 +26,14 @@ const createStorage = () => {
     base(AIRTABLE_TABLE_IMAGES).create({ group, username, image }, callback)
   }
   
+  const storeAvatar = ({ group, username, image }, callback) => {
+    base(AIRTABLE_TABLE_AVATARS).create({ group, username, image }, callback)
+  }
+  
   return {
-    storeURL,
-    storeImage
+    storeAvatar,
+    storeImage,
+    storeURL
   }
 }
 
