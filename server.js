@@ -38,6 +38,46 @@ const handleURLS = (message, urls) => {
   storeURLS(chat, from, urls)
 }
 
+const handlePhoto = (message, photo) => {
+  
+  let file_id = photo[photo.length - 1].file_id
+  let url = `https://api.telegram.org/bot${TELEGRAM_API_KEY}/getFile?file_id=${file_id}`
+
+  axios.get(url).then(response => {
+
+    let from = message.from
+    let chat = message.chat
+    let group = chat.title
+    let username = from.username
+
+    let image = [{ url: `https://api.telegram.org/file/bot${TELEGRAM_API_KEY}/${response.data.result.file_path}` }]
+
+    Storage.storeImage({ group, username, image }, (response) => {
+      console.log(response)
+    })
+  })
+}
+
+const handleChatAvatar = (message, photo) => {
+  
+  let file_id = photo[photo.length - 1].file_id
+  let url = `https://api.telegram.org/bot${TELEGRAM_API_KEY}/getFile?file_id=${file_id}`
+
+  axios.get(url).then(response => {
+
+    let from = message.from
+    let chat = message.chat
+    let group = chat.title
+    let username = from.username
+
+    let image = [{ url: `https://api.telegram.org/file/bot${TELEGRAM_API_KEY}/${response.data.result.file_path}` }]
+
+    Storage.storeAvatar({ group, username, image }, (response) => {
+      console.log(response)
+    })
+  })
+}
+
 const storeURLS = (chat, from, urls) => {
   let group = chat.title
   let username = from.username
@@ -55,26 +95,13 @@ const onMessage = (req, res) => {
   if (!message) {
     return res.end()
   }
-  
-  console.log(message)
 
   if (message && message.photo) {
-    let file_id = message.photo[message.photo.length - 1].file_id
-    let url = `https://api.telegram.org/bot${TELEGRAM_API_KEY}/getFile?file_id=${file_id}`
+    handlePhoto(message, message.photo)
+  }
 
-    axios.get(url).then(response => {
-
-      let from = message.from
-      let chat = message.chat
-      let group = chat.title
-      let username = from.username
-
-      let image = [{ url: `https://api.telegram.org/file/bot${TELEGRAM_API_KEY}/${response.data.result.file_path}` }]
-      
-      Storage.storeImage({ group, username, image }, (response) => {
-        console.log(response)
-      })
-    })
+  if (message && message.new_chat_photo) {
+    handleChatAvatar(message, message.new_chat_photo)
   }
   
   if (message && message.text) {
