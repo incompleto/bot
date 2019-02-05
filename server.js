@@ -65,9 +65,9 @@ app.post('/message', function(req, res) {
         
         let a = Array.from(urls);
         
-        let notes = a.join(',')
+        urls = a.join(',')
         
-        base(AIRTABLE_BASE).create({ notes }, (response) => {
+        base("Table 1").create({ urls }, (response) => {
           console.log(response)
         })
         
