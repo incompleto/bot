@@ -2,24 +2,15 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
 const axios = require('axios')
-const getURLS = require('get-urls')
-const Airtable = require('airtable')
-
-const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY
-const AIRTABLE_ENDPOINT = process.env.AIRTABLE_ENDPOINT
-const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID
-const AIRTABLE_BASE = process.env.AIRTABLE_BASE_NAME
-const AIRTABLE_TABLE = process.env.AIRTABLE_TABLE
+const getURLS = require('get-urls') 
 
 const API_KEY = process.env.API_KEY
 const TELEGRAM_URL = `https://api.telegram.org/bot${API_KEY}/sendMessage`
 
-Airtable.configure({
-  endpointUrl: AIRTABLE_ENDPOINT,
-  apiKey: AIRTABLE_API_KEY
-})
 
-let base = new Airtable({ AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID)
+
+const Storage = require('./storage')
+
 
 const showError = (error) => {
   console.error(error)
@@ -47,7 +38,7 @@ const storeURLS = (chat, from, urls) => {
   let username = from.username
 
   urls.forEach((url) => {
-    base(AIRTABLE_TABLE).create({ group, username, url }, (response) => {
+    Storage.storeURL({ group, username, url }, (response) => {
       console.log(response)
     })
   })
