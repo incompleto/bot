@@ -46,41 +46,47 @@ const answerToURLS = (urls, message) => {
   return axios.post(TELEGRAM_URL, data)
 }
 
-app.post('/message', function(req, res) {
-  const { message } = req.body
+const storeURLS = (chat, from, urls) => {
+  let group = chat.title
+  let username = from.username
 
-  let urls = []
+  urls.forEach((url) => {
+    base(AIRTABLE_TABLE).create({ group, username, url }, (response) => {
+      console.log(response)
+    })
+  })
+}
+
+const onMessage = (req, res) => {
+  const { message } = req.body
 
   if (!message) {
     return res.end()
   }
 
   if (message && message.text) {
-    urls = Array.from(getURLS(message.text))
+    let from = message.from
+    let chat = message.chat
+
+    let urls = Array.from(getURLS(message.text))
 
     if (urls.length > 0) {
       answerToURLS(urls, message)
         .then(response => {
-
-          for (let url in urls) {
-              base(AIRTABLE_TABLE).create({ url }, (response) => {
-              console.log(response)
-          })
-
-          }
-
-        
-          res.end('ok')
+          storeURLS(chat, from, urls)
         })
         .catch(err => {
           console.log('Error :', err)
           res.end('Error :' + err)
+          return
         })
     }
   }
 
   res.end('ok')
-})
+}
+
+app.post('/message', onMessage)
 
 const listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
