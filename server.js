@@ -4,13 +4,10 @@ const bodyParser = require('body-parser')
 const axios = require('axios')
 const getURLS = require('get-urls') 
 
-const API_KEY = process.env.API_KEY
-const TELEGRAM_URL = `https://api.telegram.org/bot${API_KEY}/sendMessage`
-
-
-
 const Storage = require('./storage')
 
+const TELEGRAM_API_KEY = process.env.API_KEY
+const TELEGRAM_URL = `https://api.telegram.org/bot${TELEGRAM_API_KEY}/sendMessage`
 
 const showError = (error) => {
   console.error(error)

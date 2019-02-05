@@ -7,9 +7,6 @@ const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID
 const AIRTABLE_BASE = process.env.AIRTABLE_BASE_NAME
 const AIRTABLE_TABLE = process.env.AIRTABLE_TABLE
 
-const API_KEY = process.env.API_KEY
-const TELEGRAM_URL = `https://api.telegram.org/bot${API_KEY}/sendMessage`
-
 Airtable.configure({
   endpointUrl: AIRTABLE_ENDPOINT,
   apiKey: AIRTABLE_API_KEY
