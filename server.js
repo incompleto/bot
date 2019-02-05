@@ -38,9 +38,18 @@ const answerToURLS = (res, urls, message) => {
 
 app.post('/message', function(req, res) {
   const { message } = req.body
+  
+  if (!message) {
+    return res.end()
+  }
+    
+  
+  console.log('message: ', message.text)
+  
+ /* 
   let urls = new Set()
 
-  console.log(message)
+  
   
   if (message && message.text) {
     urls = getURLS(message.text)
@@ -55,7 +64,7 @@ app.post('/message', function(req, res) {
 
   if (urls.size > 0) {
     answerToURLS(res, urls, message)
-  }
+  }*/
 })
 
 const listener = app.listen(process.env.PORT, function() {
