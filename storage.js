@@ -1,4 +1,3 @@
-const getUrls = require('get-urls')
 const Airtable = require('airtable')
 
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY
@@ -18,11 +17,11 @@ let base = new Airtable({ AIRTABLE_API_KEY }).base(AIRTABLE_BASE_ID)
 
 const createStorage = () => {
  
-  const storeURL = ({ group, username, url, tags }, callback) => {
+  const storeURL = ({ group, username, comment, url, tags }, callback) => {
     tags = (tags && tags.join(', ')) || ''
     
     console.log('SAVING URL', group, username, url, tags)
-    base(AIRTABLE_TABLE_URLS).create({ group, username, url, tags }, callback)
+    base(AIRTABLE_TABLE_URLS).create({ group, username, comment, url, tags }, callback)
   }
   
   const storeImage = ({ group, username, image, tags }, callback) => {

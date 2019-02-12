@@ -2,15 +2,15 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser')
 const axios = require('axios')
-const extractURLs = require('get-urls') 
+const extractURLs = require("anchorme").default
 
 const Storage = require('./storage')
 
 const TELEGRAM_API_KEY = process.env.TELEGRAM_API_KEY
 const TELEGRAM_URL = `https://api.telegram.org/bot${TELEGRAM_API_KEY}/sendMessage`
 
-const REGEXP_TAGS = /<#.*?\|(.*?)>|#(\w+)/gi
-const REGEXP_TAG = /<#.*?\|(.*?)>|#(\w+)/
+const REGEXP_TAGS = /#(\w+)/gi
+const REGEXP_TAG = /#(\w+)/
 
 const showError = (error) => {
   console.error(error)
@@ -36,11 +36,11 @@ const reply = (chat_id, text) => {
 const handleURLS = (message, urls, tags) => {
   let from = message.from
   let chat = message.chat
-  let description = extractDescription(message.text, tags, urls)
+  let comment = extractDescription(message.text, tags, urls)
   
-  console.log(from, chat, description, urls, tags)
+  console.log(from, chat, comment, urls, tags)
   
-  storeURLS(chat, from, urls, tags)
+  storeURLS(chat, from, comment, urls, tags)
 }
 
 const handlePhoto = (message, photo) => {
@@ -58,7 +58,7 @@ const handlePhoto = (message, photo) => {
     let image = [{ url: `https://api.telegram.org/file/bot${TELEGRAM_API_KEY}/${response.data.result.file_path}` }]
 
     Storage.storeImage({ group, username, image }, (response) => {
-      console.log(response)
+     // console.log(response)
     })
   }
   
@@ -87,19 +87,18 @@ const handleChatAvatar = (message, photo) => {
   axios.get(url).then(onGetResponse) 
 }
 
-const storeURLS = (chat, from, urls, tags) => {
+const storeURLS = (chat, from, comment, urls, tags) => {
   let group = chat.title
   let username = from.username
 
   urls.forEach((url) => {
-    Storage.storeURL({ group, username, url, tags }, (response) => {
-      console.log(response)
+    Storage.storeURL({ group, username, comment, url, tags }, (response) => {
+      console.log('RESPONSE', response)
     })
   })
 }
 
 const extractTags = (text) => {
-
   let matches = text.match(REGEXP_TAGS)
   let tags = []
   
@@ -113,12 +112,22 @@ const extractTags = (text) => {
   return tags
 }
 
-const extractDescription = (text, tags, urls) => {  
-  return text.split(' ').filter((word) => {
-    if ((urls && !urls.includes(word)) && (tags && !tags.includes(word))) {
-      return word 
-    }
-  }).join(' ')
+      const concatArrayOfArrays = (args) => {
+        return args.reduce((acc, val) => [...acc, ...val]);
+      }
+
+      const extractDescription = (text, ...arrays) => {
+        let data = concatArrayOfArrays(arrays)
+
+        return text.split(' ').filter((word) => {
+          if (data && !data.includes(word)) {
+            return word
+          }
+        }).join(' ')
+      }
+
+const pluck = (array, key) => {
+  return array.map(o => o[key])
 }
 
 const onMessage = (req, res) => {
@@ -139,13 +148,8 @@ const onMessage = (req, res) => {
   
   if (message && message.text) {
     let tags = extractTags(message.text)
-    let urls = Array.from(extractURLs(message.text))
-    let description = extractDescription(message.text, urls, tags)
+    let urls = pluck(extractURLs(message.text, { list: true }), 'raw')
 
-    console.log('Extracting description', description)
-    console.log('Content', message.text, tags, urls)
-    
-    
     if (urls.length > 0) {
       handleURLS(message, urls, tags)
     }
