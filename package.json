@@ -10,11 +10,12 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "lodash": "^4.17.19",
     "express": "^4.16.4",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
-    "airtable": "^0.7.2",
-    "anchorme": "^1.1.2"
+    "airtable": "^40.7.2",
+    "anchorme": "^41.1.2"
   },
   "engines": {
     "node": "8.x"
